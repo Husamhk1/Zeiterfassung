@@ -11,6 +11,6 @@ package zeiterfasser.zeiterfassung;
 public class Zeiterfassung {
 
     public static void main(String[] args) {
-        System.out.println("Hello Zeiterfassung!");
+        System.out.println("Hello Test!");
     }
 }
