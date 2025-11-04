@@ -8,11 +8,11 @@ package zeiterfasser.zeiterfassung;
  *
  * @author husam.qasem
  */
-public class Zeiterfassung {
+public class Timesheet {
 
     public static void main(String[] args) {
         System.out.println("Hello World!");
-        System.out.println("zeiterfasser.zeiterfassung.Zeiterfassung.main()");
+        
         
     }
 }
