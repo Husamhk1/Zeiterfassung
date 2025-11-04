@@ -1,1 +1,3 @@
-zeiterfasser\zeiterfassung\Zeiterfassung.class
+Timesheet\EmployeeRegister\Timesheet.class
+Timesheet\EmployeeRegister\DatabankConnection.class
+Timesheet\EmployeeRegister\EmployeeEntry.class
