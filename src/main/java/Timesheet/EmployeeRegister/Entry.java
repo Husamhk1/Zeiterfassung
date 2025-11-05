@@ -4,38 +4,38 @@
  */
 package Timesheet.EmployeeRegister;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author husam.qasem
  */
 public class Entry {
+private List<Entry> enteries = new ArrayList<>();
     //Employer Data
     private int employeeID;
     private String firstName;
     private String lastName;
     private String emailAdress;
     private String postion;
-    
+
     //Pojects Data
     private int projectID;
     private String ordernumber;
-    private String ProjectName;
-    private String Description;
-    
-    //TimeRecording Data
-    private int TimeRecording_ID;
-    private int Employee_ID;
-    private int Project_ID;
-    private String StartTime;
-    private String EndTime;
-    private String Comment;
-    
-    
-    
-    
-    
-    Entry(int employeeID, String firstName, String lastName, String emailAdress, String postion) {
+    private String projectName;
+    private String description;
 
+    //TimeRecording Data
+    private int timeRecording_ID;
+    private int employee_ID;
+    private int project_ID;
+    private String startTime;
+    private String endTime;
+    private String comment;
+
+    //Constructor of Employees
+    Entry(int employeeID, String firstName, String lastName, String emailAdress, String postion) {
         this.employeeID = employeeID;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -43,6 +43,30 @@ public class Entry {
         this.postion = postion;
     }
 
+    //Constructor of Projects
+    Entry(int projectID, String ordernumber, String projectName, String description) {
+        this.projectID = projectID;
+        this.projectName = projectName;
+        this.description = description;
+
+    }
+
+    //Constructor of TimeRecords
+    Entry(int timeRecording_ID, int employee_ID, int project_ID, String startTime, String endTime, String comment) {
+        this.timeRecording_ID = timeRecording_ID;
+        this.employee_ID = employee_ID;
+        this.project_ID = project_ID;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.comment = comment;
+
+    }
+
+    Entry() {
+
+    }
+    
+   
     /**
      * @return the employeeID
      */
@@ -142,115 +166,115 @@ public class Entry {
     }
 
     /**
-     * @return the ProjectName
+     * @return the projectName
      */
     public String getProjectName() {
-        return ProjectName;
+        return projectName;
     }
 
     /**
-     * @param ProjectName the ProjectName to set
+     * @param projectName the projectName to set
      */
-    public void setProjectName(String ProjectName) {
-        this.ProjectName = ProjectName;
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
     }
 
     /**
-     * @return the Description
+     * @return the description
      */
     public String getDescription() {
-        return Description;
+        return description;
     }
 
     /**
-     * @param Description the Description to set
+     * @param description the description to set
      */
-    public void setDescription(String Description) {
-        this.Description = Description;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     /**
-     * @return the TimeRecording_ID
+     * @return the timeRecording_ID
      */
     public int getTimeRecording_ID() {
-        return TimeRecording_ID;
+        return timeRecording_ID;
     }
 
     /**
-     * @param TimeRecording_ID the TimeRecording_ID to set
+     * @param timeRecording_ID the timeRecording_ID to set
      */
-    public void setTimeRecording_ID(int TimeRecording_ID) {
-        this.TimeRecording_ID = TimeRecording_ID;
+    public void setTimeRecording_ID(int timeRecording_ID) {
+        this.timeRecording_ID = timeRecording_ID;
     }
 
     /**
-     * @return the Employee_ID
+     * @return the employee_ID
      */
     public int getEmployee_ID() {
-        return Employee_ID;
+        return employee_ID;
     }
 
     /**
-     * @param Employee_ID the Employee_ID to set
+     * @param employee_ID the employee_ID to set
      */
-    public void setEmployee_ID(int Employee_ID) {
-        this.Employee_ID = Employee_ID;
+    public void setEmployee_ID(int employee_ID) {
+        this.employee_ID = employee_ID;
     }
 
     /**
-     * @return the Project_ID
+     * @return the project_ID
      */
     public int getProject_ID() {
-        return Project_ID;
+        return project_ID;
     }
 
     /**
-     * @param Project_ID the Project_ID to set
+     * @param project_ID the project_ID to set
      */
-    public void setProject_ID(int Project_ID) {
-        this.Project_ID = Project_ID;
+    public void setProject_ID(int project_ID) {
+        this.project_ID = project_ID;
     }
 
     /**
-     * @return the StartTime
+     * @return the startTime
      */
     public String getStartTime() {
-        return StartTime;
+        return startTime;
     }
 
     /**
-     * @param StartTime the StartTime to set
+     * @param startTime the startTime to set
      */
-    public void setStartTime(String StartTime) {
-        this.StartTime = StartTime;
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
     }
 
     /**
-     * @return the EndTime
+     * @return the endTime
      */
     public String getEndTime() {
-        return EndTime;
+        return endTime;
     }
 
     /**
-     * @param EndTime the EndTime to set
+     * @param endTime the endTime to set
      */
-    public void setEndTime(String EndTime) {
-        this.EndTime = EndTime;
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
     }
 
     /**
-     * @return the Comment
+     * @return the comment
      */
     public String getComment() {
-        return Comment;
+        return comment;
     }
 
     /**
-     * @param Comment the Comment to set
+     * @param comment the comment to set
      */
-    public void setComment(String Comment) {
-        this.Comment = Comment;
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
 }

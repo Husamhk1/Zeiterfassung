@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,11 +22,16 @@ public class Timesheet {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(Timesheet.class);
     private static final DatabankConnection conn = new DatabankConnection();
+  
 
     public static void main(String[] args) throws SQLException, IOException {
 
         System.out.println("Willcoome to the Timesheet");       
         conn.connectUrl();
-        conn.findAll().listIterator();
+        conn.findAllInTablle("employee").forEach(a -> System.out.println(a.getFirstName() + "\t" + a.getLastName()+ "\t"+a.getEmailAdress()));
+           
+        
+        
+        
     }
 }

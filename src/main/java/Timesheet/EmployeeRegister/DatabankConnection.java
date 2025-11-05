@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 public class DatabankConnection {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabankConnection.class);
-    
+    private static final List<Entry> entries = new ArrayList<>();
     // specify location of Databank
     File databank = new File("C:\\Users\\husam.qasem\\Documents\\NetBeansProjects\\Zeiterfassung\\databank\\DB_zeiterfassung.db");
     // Then open the friendsdb file with sqllite jdbc driver
@@ -31,11 +31,16 @@ public class DatabankConnection {
 
     //Driver of Sqlite DataBase 
     String driver = "org.sqlite.JDBC";
-
-     // Read all records from my Database Sample :)
-      public List<Entry> findAll() throws IOException, SQLException{
+    
+      
+   public List<Entry> getEntry(){
+        return entries;
+    }
+    
+     // Read all records of Employees from my Database Sample :)
+      public List<Entry> findAllInTablle(String tableName) throws IOException, SQLException{
         List<Entry> rows = new ArrayList<>();
-        String sql = "SELECT employeeID, firstName, lastName, emailAdress, postion FROM Employee";
+        String sql = "SELECT * FROM "+ tableName;
         try (
                Connection conn = DriverManager.getConnection(url);
                Statement stmt  = conn.createStatement();
@@ -43,8 +48,13 @@ public class DatabankConnection {
          System.out.println("Connection to SQLite has been established to the Database:" + url );
             // loop through the result set
             while (rs.next()) {
+                if(tableName == "Employees"){
                 rows.add( new Entry(rs.getInt("employeeID"),rs.getString("firstName"),rs.getString("lastName"),rs.getString("emailAdress"),rs.getString("postion")));
-         
+                }else if(tableName == "Projects"){
+                rows.add( new Entry(rs.getInt("employeeID"),rs.getString("firstName"),rs.getString("lastName"),rs.getString("emailAdress"),rs.getString("postion")));
+                }else if(tableName == "Time_Recording"){
+                    
+                }
             }
         } catch (SQLException e) {
             
