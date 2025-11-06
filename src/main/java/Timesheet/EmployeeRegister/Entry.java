@@ -12,7 +12,7 @@ import java.util.List;
  * @author husam.qasem
  */
 public class Entry {
-private List<Entry> enteries = new ArrayList<>();
+
     //Employer Data
     private int employeeID;
     private String firstName;
@@ -47,6 +47,7 @@ private List<Entry> enteries = new ArrayList<>();
     Entry(int projectID, String ordernumber, String projectName, String description) {
         this.projectID = projectID;
         this.projectName = projectName;
+        this.ordernumber = ordernumber;
         this.description = description;
 
     }
@@ -62,11 +63,31 @@ private List<Entry> enteries = new ArrayList<>();
 
     }
 
+    Entry(int employeeID, String firstName, String lastName, String emailAdress, String postion,
+            int projectID, String ordernumber, String projectName, String description,
+            int timeRecording_ID, int employee_ID, int project_ID, String startTime, String endTime, String comment) {
+        this.employeeID = employeeID;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.emailAdress = emailAdress;
+        this.postion = postion;
+        this.projectID = projectID;
+        this.projectName = projectName;
+        this.ordernumber = ordernumber;
+        this.description = description;
+        this.timeRecording_ID = timeRecording_ID;
+        this.employee_ID = employee_ID;
+        this.project_ID = project_ID;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.comment = comment;
+
+    }
+
     Entry() {
 
     }
-    
-   
+
     /**
      * @return the employeeID
      */

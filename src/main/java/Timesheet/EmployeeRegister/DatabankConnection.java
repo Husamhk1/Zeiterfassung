@@ -31,38 +31,50 @@ public class DatabankConnection {
 
     //Driver of Sqlite DataBase 
     String driver = "org.sqlite.JDBC";
-    
-      
-   public List<Entry> getEntry(){
+
+    public List<Entry> getEntry() {
         return entries;
     }
-    
-     // Read all records of Employees from my Database Sample :)
-      public List<Entry> findAllInTablle(String tableName) throws IOException, SQLException{
+
+    // Read all records of Employees from my Database Sample :)
+    public List<Entry> findAllInTablle(String tableName) throws IOException, SQLException {
         List<Entry> rows = new ArrayList<>();
-        String sql = "SELECT * FROM "+ tableName;
+        String sql = "";
+
+        if (tableName == "employees" || tableName == "projects" || tableName == "timeRecording") {
+            LOGGER.info("The Tablename is entered \t :{} ", tableName);
+
+            sql = "SELECT * FROM " + tableName;
+        } else {
+            LOGGER.info("The tablename is't correct. Try again! :)");
+            sql = "SELECT * FROM employees "
+                    + "INNER JOIN projects on ProjectID = project_ID "
+                    + "INNER JOIN timeRecording on employeeID = employee_ID";
+        }
         try (
-               Connection conn = DriverManager.getConnection(url);
-               Statement stmt  = conn.createStatement();
-               ResultSet rs    = stmt.executeQuery(sql) ){
-         System.out.println("Connection to SQLite has been established to the Database:" + url );
+                Connection conn = DriverManager.getConnection(url); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+            System.out.println("Connection to SQLite has been established to the Database:" + url);
             // loop through the result set
             while (rs.next()) {
-                if(tableName == "Employees"){
-                rows.add( new Entry(rs.getInt("employeeID"),rs.getString("firstName"),rs.getString("lastName"),rs.getString("emailAdress"),rs.getString("postion")));
-                }else if(tableName == "Projects"){
-                rows.add( new Entry(rs.getInt("employeeID"),rs.getString("firstName"),rs.getString("lastName"),rs.getString("emailAdress"),rs.getString("postion")));
-                }else if(tableName == "Time_Recording"){
-                    
+                if (tableName == "employees") {
+                    rows.add(new Entry(rs.getInt("employeeID"), rs.getString("firstName"), rs.getString("lastName"), rs.getString("emailAdress"), rs.getString("postion")));
+                } else if (tableName == "projects") {
+                    rows.add(new Entry(rs.getInt("projectID"), rs.getString("ordernumber"), rs.getString("projectName"), rs.getString("description")));
+                } else if (tableName == "timeRecording") {
+                    rows.add(new Entry(rs.getInt("timeRecording_ID"), rs.getInt("employee_ID"), rs.getInt("project_ID"), rs.getString("startTime"), rs.getString("endTime"), rs.getString("comment")));
+                }else{
+                    rows.add(new Entry(rs.getInt("employeeID"), rs.getString("firstName"), rs.getString("lastName"), rs.getString("emailAdress"), rs.getString("postion")
+                                       ,rs.getInt("projectID"), rs.getString("ordernumber"), rs.getString("projectName"), rs.getString("description")
+                                        ,rs.getInt("timeRecording_ID"), rs.getInt("employee_ID"), rs.getInt("project_ID"), rs.getString("startTime"), rs.getString("endTime"), rs.getString("comment")
+                    ));                                      
                 }
             }
         } catch (SQLException e) {
-            
-            System.out.println(e.getMessage() );
+
+            System.out.println(e.getMessage());
         }
-    return rows;
-}
-      
+        return rows;
+    }
 
     //Connnection to The SQLite Database    
     public Connection connectUrl() {
