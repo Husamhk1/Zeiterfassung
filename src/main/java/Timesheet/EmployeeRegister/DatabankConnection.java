@@ -32,10 +32,6 @@ public class DatabankConnection {
     //Driver of Sqlite DataBase 
     String driver = "org.sqlite.JDBC";
 
-    public List<Entry> getEntry() {
-        return entries;
-    }
-
     // Read all records of Employees from my Database Sample :)
     public List<Entry> findAllInTablle(String tableName) throws IOException, SQLException {
         List<Entry> rows = new ArrayList<>();
@@ -75,7 +71,11 @@ public class DatabankConnection {
         }
         return rows;
     }
-
+    public List<Entry> addRecord(){
+        List<Entry> rows = new ArrayList<>();
+        
+        return rows;
+    }
     //Connnection to The SQLite Database    
     public Connection connectUrl() {
         Connection conn = null;
