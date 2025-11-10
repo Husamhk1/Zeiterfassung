@@ -28,9 +28,9 @@ public class Timesheet {
 
         System.out.println("Willcoome to the Timesheet");       
         conn.connectUrl();
-        conn.findAllInTablle("")//.forEach(System.out::println);
-                .forEach(a -> System.out.println(a.getFirstName()+ "\t"+a.getStartTime()+"\t"+a.getProjectID()+ "\t"+a.getProjectName()+ "\t" + a.getOrdernumber()+ "\t"+a.getDescription()));
-           
+        conn.findAllInTablle("").forEach(System.out::println);
+                //.forEach(a -> System.out.println(a.getFirstName()+ "\t"+a.getStartTime()+"\t"+a.getProjectID()+ "\t"+a.getProjectName()+ "\t" + a.getOrdernumber()+ "\t"+a.getDescription()));
+        
         
         
         

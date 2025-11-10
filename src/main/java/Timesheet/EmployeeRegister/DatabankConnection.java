@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -39,7 +40,6 @@ public class DatabankConnection {
 
         if (tableName == "employees" || tableName == "projects" || tableName == "timeRecording") {
             LOGGER.info("The Tablename is entered \t :{} ", tableName);
-
             sql = "SELECT * FROM " + tableName;
         } else {
             LOGGER.info("The tablename is't correct. Try again! :)");
@@ -48,17 +48,24 @@ public class DatabankConnection {
                     + "INNER JOIN timeRecording on employeeID = employee_ID";
         }
         try (
-                Connection conn = DriverManager.getConnection(url); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
-            System.out.println("Connection to SQLite has been established to the Database:" + url);
+                Connection conn = DriverManager.getConnection(url); 
+                Statement stmt = conn.createStatement(); 
+                ResultSet rs = stmt.executeQuery(sql)) {
+            LOGGER.info("Connection to SQLite has been established to the Database:\t {}", url);
+            
             // loop through the result set
             while (rs.next()) {
                 if (tableName == "employees") {
+                    LOGGER.info("The filds of the Table \t {}", tableName);
                     rows.add(new Entry(rs.getInt("employeeID"), rs.getString("firstName"), rs.getString("lastName"), rs.getString("emailAdress"), rs.getString("postion")));
                 } else if (tableName == "projects") {
+                    LOGGER.info("The filds of the Table \t {}", tableName);
                     rows.add(new Entry(rs.getInt("projectID"), rs.getString("ordernumber"), rs.getString("projectName"), rs.getString("description")));
                 } else if (tableName == "timeRecording") {
+                    LOGGER.info("The filds of the Table \t {}", tableName);
                     rows.add(new Entry(rs.getInt("timeRecording_ID"), rs.getInt("employee_ID"), rs.getInt("project_ID"), rs.getString("startTime"), rs.getString("endTime"), rs.getString("comment")));
                 }else{
+                    LOGGER.info("The all filds of the databank will be printed her!");
                     rows.add(new Entry(rs.getInt("employeeID"), rs.getString("firstName"), rs.getString("lastName"), rs.getString("emailAdress"), rs.getString("postion")
                                        ,rs.getInt("projectID"), rs.getString("ordernumber"), rs.getString("projectName"), rs.getString("description")
                                         ,rs.getInt("timeRecording_ID"), rs.getInt("employee_ID"), rs.getInt("project_ID"), rs.getString("startTime"), rs.getString("endTime"), rs.getString("comment")
@@ -75,6 +82,31 @@ public class DatabankConnection {
         List<Entry> rows = new ArrayList<>();
         
         return rows;
+    }
+    
+    public void addOneRecord(List<Entry> Stirng) {
+        
+        String sql = "INSERT INTO friends (vCard, sip_uri,subscribe_policy,send_subscribe,presence_received)"
+                + " VALUES( ?, ?, ?, ?, ?);";
+        
+        try {
+            Connection conn = DriverManager.getConnection(url);
+                PreparedStatement  pre = conn.prepareStatement(sql);
+                pre.setString(1, addVcard);
+                pre.setString(2, addSip_uri);
+                pre.setInt(3, subscribe_policy);
+                pre.setInt(4, send_subscribe);
+                pre.setInt(5, presence_received);
+                pre.executeUpdate();
+                LOGGER.info("Connection to SQLite is established {}", url);    
+                LOGGER.info("The Record was added:\n{}",  addVcard , addSip_uri );
+                
+           
+        } catch (SQLException e) {
+            
+            LOGGER.error(e.getMessage());
+        }
+        
     }
     //Connnection to The SQLite Database    
     public Connection connectUrl() {
