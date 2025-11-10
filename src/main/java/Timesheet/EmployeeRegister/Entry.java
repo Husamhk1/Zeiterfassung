@@ -22,7 +22,7 @@ public class Entry {
 
     //Pojects Data
     private int projectID;
-    private String ordernumber;
+    private String projectNumber;
     private String projectName;
     private String description;
 
@@ -32,6 +32,7 @@ public class Entry {
     private int project_ID;
     private String startTime;
     private String endTime;
+    private float workTime;
     private String comment;
 
     //Constructor of Employees
@@ -44,28 +45,29 @@ public class Entry {
     }
 
     //Constructor of Projects
-    Entry(int projectID, String ordernumber, String projectName, String description) {
+    Entry(int projectID, String projectName,String projectNumber,  String description) {
         this.projectID = projectID;
         this.projectName = projectName;
-        this.ordernumber = ordernumber;
+        this.projectNumber = projectNumber;
         this.description = description;
 
     }
 
     //Constructor of TimeRecords
-    Entry(int timeRecording_ID, int employee_ID, int project_ID, String startTime, String endTime, String comment) {
+    Entry(int timeRecording_ID, int employee_ID, int project_ID, String startTime, String endTime,float workTime, String comment) {
         this.timeRecording_ID = timeRecording_ID;
         this.employee_ID = employee_ID;
         this.project_ID = project_ID;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.workTime = workTime;        
         this.comment = comment;
 
     }
 
     Entry(int employeeID, String firstName, String lastName, String emailAdress, String postion,
-            int projectID, String ordernumber, String projectName, String description,
-            int timeRecording_ID, int employee_ID, int project_ID, String startTime, String endTime, String comment) {
+            int projectID, String projectName,String projectNumber,  String description,
+            int timeRecording_ID, int employee_ID, int project_ID, String startTime, String endTime,float workTime, String comment) {
         this.employeeID = employeeID;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -73,13 +75,14 @@ public class Entry {
         this.postion = postion;
         this.projectID = projectID;
         this.projectName = projectName;
-        this.ordernumber = ordernumber;
+        this.projectNumber = projectNumber;
         this.description = description;
         this.timeRecording_ID = timeRecording_ID;
         this.employee_ID = employee_ID;
         this.project_ID = project_ID;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.workTime = workTime;
         this.comment = comment;
 
     }
@@ -170,20 +173,6 @@ public class Entry {
      */
     public void setProjectID(int projectID) {
         this.projectID = projectID;
-    }
-
-    /**
-     * @return the ordernumber
-     */
-    public String getOrdernumber() {
-        return ordernumber;
-    }
-
-    /**
-     * @param ordernumber the ordernumber to set
-     */
-    public void setOrdernumber(String ordernumber) {
-        this.ordernumber = ordernumber;
     }
 
     /**
@@ -296,6 +285,34 @@ public class Entry {
      */
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    /**
+     * @return the projectNumber
+     */
+    public String getProjectNumber() {
+        return projectNumber;
+    }
+
+    /**
+     * @param projectNumber the projectNumber to set
+     */
+    public void setProjectNumber(String projectNumber) {
+        this.projectNumber = projectNumber;
+    }
+
+    /**
+     * @return the workTime
+     */
+    public float getWorkTime() {
+        return workTime;
+    }
+
+    /**
+     * @param workTime the workTime to set
+     */
+    public void setWorkTime(float workTime) {
+        this.workTime = workTime;
     }
 
 }

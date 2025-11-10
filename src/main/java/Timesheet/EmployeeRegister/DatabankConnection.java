@@ -38,7 +38,7 @@ public class DatabankConnection {
         List<Entry> rows = new ArrayList<>();
         String sql = "";
 
-        if (tableName == "employees" || tableName == "projects" || tableName == "timeRecording") {
+        if ((tableName.equalsIgnoreCase("employees")) || (tableName.equalsIgnoreCase("projects")) || (tableName.equalsIgnoreCase("timeRecording"))) {
             LOGGER.info("The Tablename is entered \t :{} ", tableName);
             sql = "SELECT * FROM " + tableName;
         } else {
@@ -48,28 +48,26 @@ public class DatabankConnection {
                     + "INNER JOIN timeRecording on employeeID = employee_ID";
         }
         try (
-                Connection conn = DriverManager.getConnection(url); 
-                Statement stmt = conn.createStatement(); 
-                ResultSet rs = stmt.executeQuery(sql)) {
+                Connection conn = DriverManager.getConnection(url); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             LOGGER.info("Connection to SQLite has been established to the Database:\t {}", url);
-            
+
             // loop through the result set
             while (rs.next()) {
-                if (tableName == "employees") {
+                if (tableName.equalsIgnoreCase("employees")) {
                     LOGGER.info("The filds of the Table \t {}", tableName);
                     rows.add(new Entry(rs.getInt("employeeID"), rs.getString("firstName"), rs.getString("lastName"), rs.getString("emailAdress"), rs.getString("postion")));
-                } else if (tableName == "projects") {
+                } else if (tableName.equalsIgnoreCase("projects")) {
                     LOGGER.info("The filds of the Table \t {}", tableName);
-                    rows.add(new Entry(rs.getInt("projectID"), rs.getString("ordernumber"), rs.getString("projectName"), rs.getString("description")));
-                } else if (tableName == "timeRecording") {
+                    rows.add(new Entry(rs.getInt("ProjectID"), rs.getString("projectNumber"), rs.getString("projectName"), rs.getString("description")));
+                } else if (tableName.equalsIgnoreCase("timeRecording")) {
                     LOGGER.info("The filds of the Table \t {}", tableName);
-                    rows.add(new Entry(rs.getInt("timeRecording_ID"), rs.getInt("employee_ID"), rs.getInt("project_ID"), rs.getString("startTime"), rs.getString("endTime"), rs.getString("comment")));
-                }else{
+                    rows.add(new Entry(rs.getInt("timeRecording_ID"), rs.getInt("employee_ID"), rs.getInt("project_ID"), rs.getString("startTime"), rs.getString("endTime"),rs.getFloat("workTime"), rs.getString("comment")));
+                } else {
                     LOGGER.info("The all filds of the databank will be printed her!");
-                    rows.add(new Entry(rs.getInt("employeeID"), rs.getString("firstName"), rs.getString("lastName"), rs.getString("emailAdress"), rs.getString("postion")
-                                       ,rs.getInt("projectID"), rs.getString("ordernumber"), rs.getString("projectName"), rs.getString("description")
-                                        ,rs.getInt("timeRecording_ID"), rs.getInt("employee_ID"), rs.getInt("project_ID"), rs.getString("startTime"), rs.getString("endTime"), rs.getString("comment")
-                    ));                                      
+                    rows.add(new Entry(rs.getInt("employeeID"), rs.getString("firstName"), rs.getString("lastName"), rs.getString("emailAdress"), rs.getString("postion"),
+                            rs.getInt("ProjectID"), rs.getString("projectNumber"), rs.getString("projectName"), rs.getString("description"),
+                            rs.getInt("timeRecording_ID"), rs.getInt("employee_ID"), rs.getInt("project_ID"), rs.getString("startTime"), rs.getString("endTime"), rs.getFloat("workTime"), rs.getString("comment")
+                    ));
                 }
             }
         } catch (SQLException e) {
@@ -78,36 +76,31 @@ public class DatabankConnection {
         }
         return rows;
     }
-    public List<Entry> addRecord(){
-        List<Entry> rows = new ArrayList<>();
-        
-        return rows;
-    }
-    
-    public void addOneRecord(List<Entry> Stirng) {
-        
+
+    public void addOneRecord(String tableName, List<Entry> entry) {
+
         String sql = "INSERT INTO friends (vCard, sip_uri,subscribe_policy,send_subscribe,presence_received)"
                 + " VALUES( ?, ?, ?, ?, ?);";
-        
+
         try {
             Connection conn = DriverManager.getConnection(url);
-                PreparedStatement  pre = conn.prepareStatement(sql);
-                pre.setString(1, addVcard);
+            PreparedStatement pre = conn.prepareStatement(sql);
+            /*pre.setString(1, addVcard);
                 pre.setString(2, addSip_uri);
                 pre.setInt(3, subscribe_policy);
                 pre.setInt(4, send_subscribe);
                 pre.setInt(5, presence_received);
-                pre.executeUpdate();
-                LOGGER.info("Connection to SQLite is established {}", url);    
-                LOGGER.info("The Record was added:\n{}",  addVcard , addSip_uri );
-                
-           
+                pre.executeUpdate();*/
+            LOGGER.info("Connection to SQLite is established {}", url);
+            //LOGGER.info("The Record was added:\n{}",  addVcard , addSip_uri );
+
         } catch (SQLException e) {
-            
+
             LOGGER.error(e.getMessage());
         }
-        
+
     }
+
     //Connnection to The SQLite Database    
     public Connection connectUrl() {
         Connection conn = null;
@@ -124,7 +117,7 @@ public class DatabankConnection {
             try {
                 if (conn != null) {
                     conn.close();
-                    LOGGER.info("The Conection is closed");
+                    //LOGGER.info("The Conection is closed");
                 }
             } catch (SQLException e) {
                 LOGGER.error(e.getMessage());
@@ -132,6 +125,35 @@ public class DatabankConnection {
         }
         return conn;
     }
-;
+
+    ;
+    
+    public void printTable( String tableName) throws SQLException, IOException {
+
+        if (tableName.equalsIgnoreCase("employees")) {
+            findAllInTablle(tableName).forEach(a -> {
+                System.out.println(a.getEmployeeID() + "\t" + a.getFirstName() + "\t" + a.getLastName() + "\t" + a.getEmailAdress() + "\t" + a.getPostion());
+            });
+        } else if (tableName.equalsIgnoreCase("projects")) {
+            findAllInTablle(tableName).forEach(a -> {
+                System.out.println(a.getProjectID() + "\t" + a.getProjectNumber()+ "\t" + a.getProjectName() + "\t" + a.getDescription());
+            });
+        } else if ((tableName.equalsIgnoreCase("timeRecording"))) {
+            findAllInTablle(tableName).forEach(a -> {
+                System.out.println(a.getTimeRecording_ID() + "\t" + a.getEmployee_ID() + "\t" + a.getProject_ID() + "\t" + a.getStartTime()
+                        + "\t" + a.getEndTime() + "\t" + a.getWorkTime() + "\t" + a.getComment());
+            });
+        } else {
+             LOGGER.info("The all filds of the databank will be printed her!");
+             findAllInTablle(tableName).forEach(a -> {
+                System.out.println(
+                    a.getEmployeeID() + "\t" + a.getFirstName() + "\t" + a.getLastName() + "\t" + a.getEmailAdress() + "\t" + a.getPostion()+"\t"+
+                        a.getProjectID() + "\t" + a.getProjectNumber()+ "\t" + a.getProjectName() + "\t" + a.getDescription()+ "\t"+
+                            a.getTimeRecording_ID() + "\t" + a.getEmployee_ID() + "\t" + a.getProject_ID() + "\t" + a.getStartTime()
+                            + "\t" + a.getEndTime() + "\t" + a.getWorkTime() + "\t" + a.getComment());
+             });
+        }
+
+    }
 
 }
