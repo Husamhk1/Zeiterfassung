@@ -6,9 +6,11 @@ package Timesheet.EmployeeRegister;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,15 +24,14 @@ public class Timesheet {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(Timesheet.class);
     private static final DatabankConnection conn = new DatabankConnection();
-  
-
+    private static final TestEntry test = new TestEntry();
     public static void main(String[] args) throws SQLException, IOException {
 
-        System.out.println("Willcoome to the Timesheet");       
-        conn.connectUrl();
-        conn.printTable("");
-                
         
+        LOGGER.info("Willcoome to the Timesheet");
+        conn.connectUrl();
+        test.testEntryElements();
+     
         
         
         

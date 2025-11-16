@@ -36,8 +36,8 @@ public class Entry {
     private String comment;
 
     //Constructor of Employees
-    Entry(int employeeID, String firstName, String lastName, String emailAdress, String postion) {
-        this.employeeID = employeeID;
+    Entry( String firstName, String lastName, String emailAdress, String postion) {
+        
         this.firstName = firstName;
         this.lastName = lastName;
         this.emailAdress = emailAdress;
