@@ -22,9 +22,8 @@ import org.slf4j.LoggerFactory;
  * @author husam.qasem
  */
 public class DatabankConnection {
-
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabankConnection.class);
-    private static final List<Entry> entries = new ArrayList<>();
     // specify location of Databank
     File databank = new File("C:\\Users\\husam.qasem\\Documents\\NetBeansProjects\\Zeiterfassung\\databank\\DB_zeiterfassung.db");
     // Then open the friendsdb file with sqllite jdbc driver
@@ -37,7 +36,7 @@ public class DatabankConnection {
     public List<Entry> findAllInTablle(String tableName) throws IOException, SQLException {
         List<Entry> rows = new ArrayList<>();
         String sql = "";
-
+        
         if ((tableName.equalsIgnoreCase("employees")) || (tableName.equalsIgnoreCase("projects")) || (tableName.equalsIgnoreCase("timeRecording"))) {
             LOGGER.info("The Tablename is entered \t :{} ", tableName);
             sql = "SELECT * FROM " + tableName;
@@ -49,18 +48,18 @@ public class DatabankConnection {
         }
         try (
                 Connection conn = DriverManager.getConnection(url); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
-            LOGGER.info("Connection to SQLite has been established to the Database:\t {}", url);
-
+            
+            LOGGER.info("The filds of the Table \t {}", tableName);
             // loop through the result set
             while (rs.next()) {
                 if (tableName.equalsIgnoreCase("employees")) {
-                    LOGGER.info("The filds of the Table \t {}", tableName);
+                    
                     rows.add(new Entry(rs.getString("firstName"), rs.getString("lastName"), rs.getString("emailAdress"), rs.getString("postion")));
                 } else if (tableName.equalsIgnoreCase("projects")) {
-                    LOGGER.info("The filds of the Table \t {}", tableName);
-                    rows.add(new Entry(rs.getInt("ProjectID"), rs.getString("projectNumber"), rs.getString("projectName"), rs.getString("description")));
+                    
+                    rows.add(new Entry(rs.getString("projectNumber"), rs.getString("projectName"), rs.getString("description")));
                 } else if (tableName.equalsIgnoreCase("timeRecording")) {
-                    LOGGER.info("The filds of the Table \t {}", tableName);
+                    
                     rows.add(new Entry(rs.getInt("timeRecording_ID"), rs.getInt("employee_ID"), rs.getInt("project_ID"), rs.getString("startTime"), rs.getString("endTime"), rs.getFloat("workTime"), rs.getString("comment")));
                 } else {
                     LOGGER.info("The all filds of the databank will be printed her!");
@@ -71,46 +70,62 @@ public class DatabankConnection {
                 }
             }
         } catch (SQLException e) {
-
+            
             System.out.println(e.getMessage());
         }
         return rows;
     }
-
+    
     public void addOneRecord(String tableName, List<Entry> entry) {
         String sql = "";
         String firstName = entry.get(0).getFirstName();
         String lastName = entry.get(0).getLastName();
         String emailAdress = entry.get(0).getEmailAdress();
         String postion = entry.get(0).getPostion();
-
-        String projectNumber = entry.get(0).getProjectName();
-        String projectName = entry.get(0).getProjectName();        
+        
+        String projectNumber = entry.get(0).getProjectNumber();
+        String projectName = entry.get(0).getProjectName();
         String description = entry.get(0).getDescription();
+        
+        LOGGER.info("Insert a new Record in the Table of {} ", tableName);
         if (tableName.equalsIgnoreCase("employees")) {
+            
             sql = "INSERT INTO employees(firstName,lastName,emailAdress,postion) VALUES(?,?,?,?)";
-
+            
         } else if (tableName.equalsIgnoreCase("projects")) {
-
+            
             sql = "INSERT INTO projects(projectNumber,projectName,description) VALUES(?,?,?)";
+        } else {
+            sql = "";
         }
-
+        
         try {
             Connection conn = DriverManager.getConnection(url);
             PreparedStatement pre = conn.prepareStatement(sql);
-            pre.setString(1, firstName);
-            pre.setString(2, lastName);
-            pre.setString(3, emailAdress);
-            pre.setString(4, postion);
+            
+            if (tableName.equalsIgnoreCase("employees")) {
+                pre.setString(1, firstName);
+                pre.setString(2, lastName);
+                pre.setString(3, emailAdress);
+                pre.setString(4, postion);
+                LOGGER.info("The Record was added:\n{}", firstName, lastName, emailAdress, postion);
+            } else if (tableName.equalsIgnoreCase("projects")) {
+                pre.setString(1, projectNumber);
+                pre.setString(2, projectName);
+                pre.setString(3, description);
+                
+            } else {
+                
+            }
+            
             pre.executeUpdate();
-            LOGGER.info("Connection to SQLite is established {}", url);
-            LOGGER.info("The Record was added:\n{}", firstName, lastName, emailAdress, postion);
-
+            LOGGER.info("The new recorde was added... :)");
+            
         } catch (SQLException e) {
-
+            
             LOGGER.error(e.getMessage());
         }
-
+        
     }
 
     //Connnection to The SQLite Database    
@@ -121,10 +136,10 @@ public class DatabankConnection {
             conn = DriverManager.getConnection(url);
             //System.out.println("??? Connection to SQLite has been established to the Database:" + url );
             LOGGER.info("Connection to SQLite is established:{}", url);
-
+            
         } catch (SQLException e) {
             LOGGER.error(e.getMessage());
-
+            
         } finally {
             try {
                 if (conn != null) {
@@ -137,11 +152,11 @@ public class DatabankConnection {
         }
         return conn;
     }
-
+    
     ;
     
     public void printTable(String tableName) throws SQLException, IOException {
-
+        
         if (tableName.equalsIgnoreCase("employees")) {
             findAllInTablle(tableName).forEach(a -> {
                 System.out.println(a.getEmployeeID() + "\t" + a.getFirstName() + "\t" + a.getLastName() + "\t" + a.getEmailAdress() + "\t" + a.getPostion());
@@ -157,6 +172,7 @@ public class DatabankConnection {
             });
         } else {
             LOGGER.info("The all filds of the databank will be printed her!");
+            
             findAllInTablle(tableName).forEach(a -> {
                 System.out.println(
                         a.getEmployeeID() + "\t" + a.getFirstName() + "\t" + a.getLastName() + "\t" + a.getEmailAdress() + "\t" + a.getPostion() + "\t"
@@ -165,7 +181,7 @@ public class DatabankConnection {
                         + "\t" + a.getEndTime() + "\t" + a.getWorkTime() + "\t" + a.getComment());
             });
         }
-
+        
     }
-
+    
 }

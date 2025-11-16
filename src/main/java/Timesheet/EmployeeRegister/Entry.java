@@ -45,8 +45,8 @@ public class Entry {
     }
 
     //Constructor of Projects
-    Entry(int projectID, String projectName,String projectNumber,  String description) {
-        this.projectID = projectID;
+    Entry( String projectName,String projectNumber,  String description) {
+        
         this.projectName = projectName;
         this.projectNumber = projectNumber;
         this.description = description;
