@@ -21,9 +21,9 @@ public class TestEntry {
         //EmployeesEntery 
         if (tableName.equalsIgnoreCase("employees")) {
             Entry testData = new Entry("firstName", "lastName", "emailadress", "postion");
-            testData.setFirstName("Ahmad");
-            testData.setLastName("Hedili");
-            testData.setEmailAdress("Ahmad.Hedili@Tradui.de");
+            testData.setFirstName("Mohsen");
+            testData.setLastName("Ibraimie");
+            testData.setEmailAdress("Mohsen.Ibraimie@Tradui.de");
             testData.setPostion("Consultant");
             entEle.add(testData);
         } else if (tableName.equalsIgnoreCase("projects")) {

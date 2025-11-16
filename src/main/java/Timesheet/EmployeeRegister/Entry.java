@@ -33,11 +33,12 @@ public class Entry {
     private String startTime;
     private String endTime;
     private float workTime;
+    private float restTime;
     private String comment;
 
     //Constructor of Employees
-    Entry( String firstName, String lastName, String emailAdress, String postion) {
-        
+    Entry(String firstName, String lastName, String emailAdress, String postion) {
+
         this.firstName = firstName;
         this.lastName = lastName;
         this.emailAdress = emailAdress;
@@ -45,8 +46,8 @@ public class Entry {
     }
 
     //Constructor of Projects
-    Entry( String projectName,String projectNumber,  String description) {
-        
+    Entry(String projectName, String projectNumber, String description) {
+
         this.projectName = projectName;
         this.projectNumber = projectNumber;
         this.description = description;
@@ -54,20 +55,21 @@ public class Entry {
     }
 
     //Constructor of TimeRecords
-    Entry(int timeRecording_ID, int employee_ID, int project_ID, String startTime, String endTime,float workTime, String comment) {
+    Entry(int timeRecording_ID, int employee_ID, int project_ID, String startTime, String endTime, float workTime, float restTime, String comment) {
         this.timeRecording_ID = timeRecording_ID;
         this.employee_ID = employee_ID;
         this.project_ID = project_ID;
         this.startTime = startTime;
+        this.restTime = restTime;
         this.endTime = endTime;
-        this.workTime = workTime;        
+        this.workTime = workTime;
         this.comment = comment;
 
     }
 
     Entry(int employeeID, String firstName, String lastName, String emailAdress, String postion,
-            int projectID, String projectName,String projectNumber,  String description,
-            int timeRecording_ID, int employee_ID, int project_ID, String startTime, String endTime,float workTime, String comment) {
+            int projectID, String projectName, String projectNumber, String description,
+            int timeRecording_ID, int employee_ID, int project_ID, String startTime, String endTime, float workTime, float restTime, String comment) {
         this.employeeID = employeeID;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -83,6 +85,7 @@ public class Entry {
         this.startTime = startTime;
         this.endTime = endTime;
         this.workTime = workTime;
+        this.restTime = restTime;
         this.comment = comment;
 
     }
@@ -271,6 +274,20 @@ public class Entry {
      */
     public void setEndTime(String endTime) {
         this.endTime = endTime;
+    }
+
+    /**
+     * @param restTime the restTime to set
+     */
+    public void setRestTime(float restTime) {
+        this.restTime = restTime;
+    }
+
+    /**
+     * @return the restTime
+     */
+    public float getRestTime() {
+        return restTime;
     }
 
     /**

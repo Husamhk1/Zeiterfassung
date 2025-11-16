@@ -30,7 +30,8 @@ public class Timesheet {
         
         LOGGER.info("Willcoome to the Timesheet");
         conn.connectUrl();
-        test.testEntryElements("projcts");
+        test.testEntryElements("projects");
+        //conn.printTable("timeRecording");
      
         
         
