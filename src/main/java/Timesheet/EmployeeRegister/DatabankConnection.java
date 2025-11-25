@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +50,7 @@ public class DatabankConnection {
         try (
                 Connection conn = DriverManager.getConnection(url); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
 
-            LOGGER.info("The filds of the Table \t {}", tableName);
+            LOGGER.info("The filds of the Table  are \t :{}", tableName);
             // loop through the result set
             while (rs.next()) {
                 if (tableName.equalsIgnoreCase("employees")) {
@@ -60,7 +61,7 @@ public class DatabankConnection {
                     rows.add(new Entry(rs.getString("projectNumber"), rs.getString("projectName"), rs.getString("description")));
                 } else if (tableName.equalsIgnoreCase("timeRecording")) {
 
-                    rows.add(new Entry(rs.getInt("timeRecording_ID"), rs.getInt("employee_ID"), rs.getInt("project_ID"), rs.getString("startTime"), rs.getString("endTime"), rs.getFloat("workTime"), rs.getFloat("restTime"), rs.getString("comment")));
+                    rows.add(new Entry(rs.getInt("employee_ID"), rs.getInt("project_ID"), rs.getString("startTime"), rs.getString("endTime"), rs.getFloat("restTime"), rs.getString("comment")));
                 } else {
                     LOGGER.info("The all filds of the databank will be printed her!");
                     rows.add(new Entry(rs.getInt("employeeID"), rs.getString("firstName"), rs.getString("lastName"), rs.getString("emailAdress"), rs.getString("postion"),
@@ -73,6 +74,28 @@ public class DatabankConnection {
 
             System.out.println(e.getMessage());
         }
+        return rows;
+    }
+
+    public List<Entry> findeById(int id, String tableName) throws IOException, SQLException {
+        List<Entry> rows = new ArrayList<>();
+
+        try {
+            if (tableName.equalsIgnoreCase("employees")) {
+
+                //rows =  findAllTable(tableName).stream().filter((Entry ent) -> ((ent.getEmployeeID() == id)).collect(Collectors.toList());
+                 
+            }else if(tableName.equalsIgnoreCase("projects")){
+                rows = findAllTable(tableName).stream().filter((Entry ent)->(ent.getProjectID()== id)).collect(Collectors.toList());
+                
+            }else {
+                rows = findAllTable(tableName).stream().filter((Entry ent)->(ent.getTimeRecording_ID() == id)).collect(Collectors.toList());
+            }
+        } catch (Exception e) {
+            LOGGER.info(e.getMessage());
+
+        }
+
         return rows;
     }
 
@@ -97,7 +120,8 @@ public class DatabankConnection {
         float workTime = entry.get(0).getWorkTime();
         float restTime = entry.get(0).getRestTime();
         String comment = entry.get(0).getComment();
-        LOGGER.info("Insert a new Record in the Table of {} ", tableName);
+
+        LOGGER.info("Insert a new Record in the Table of {} \t :", tableName);
         if (tableName.equalsIgnoreCase("employees")) {
 
             sql = "INSERT INTO employees(firstName,lastName,emailAdress,postion) VALUES(?,?,?,?)";
@@ -106,7 +130,11 @@ public class DatabankConnection {
 
             sql = "INSERT INTO projects(projectNumber,projectName,description) VALUES(?,?,?)";
         } else {
-            sql = "Insert INTO timeRecording(employee_ID, project_ID,startTime, endTime, comment, workTime) VALUES(?,?,?,?,?,?)";
+
+            sql = "Insert INTO timeRecording("
+                    + "(SELECT employee_ID FROM employees WHERE  firstName = " + firstName + "AND lastName =" + lastName + "),"
+                    + "(SELECT project_ID FROM prjects WHERE projectName = " + projectName + "AND projectNumber =" + projectNumber + "),"
+                    + "startTime, endTime, comment, workTime,restTime) VALUES(?,?,?,?,?,?,?)";
         }
 
         try {
@@ -114,28 +142,28 @@ public class DatabankConnection {
             PreparedStatement pre = conn.prepareStatement(sql);
 
             if (tableName.equalsIgnoreCase("employees")) {
-                pre.setString(0, firstName);
-                pre.setString(1, lastName);
-                pre.setString(2, emailAdress);
-                pre.setString(3, postion);
+                pre.setString(1, firstName);
+                pre.setString(2, lastName);
+                pre.setString(3, emailAdress);
+                pre.setString(4, postion);
                 LOGGER.info("The Record was added:\t{} {} {} {}", firstName, lastName, emailAdress, postion);
             } else if (tableName.equalsIgnoreCase("projects")) {
-                pre.setString(0, projectNumber);
-                pre.setString(1, projectName);
-                pre.setString(2, description);
+                pre.setString(1, projectNumber);
+                pre.setString(2, projectName);
+                pre.setString(3, description);
                 LOGGER.info("The Record was added:\t{} {} {}", projectNumber, projectName, description);
             } else if (tableName.equalsIgnoreCase("timeRecording")) {
-                pre.setInt(0, employee_ID);
-                pre.setInt(1, project_Id);
-                pre.setString(2, startTime);
-                pre.setString(3, endTime);
-                pre.setFloat(4, workTime);
-                pre.setFloat(5, restTime);
-                pre.setString(6, comment);
+                pre.setInt(1, employee_ID);
+                pre.setInt(2, project_Id);
+                pre.setString(3, startTime);
+                pre.setString(4, endTime);
+                pre.setFloat(5, workTime);
+                pre.setFloat(6, restTime);
+                pre.setString(7, comment);
 
                 LOGGER.info("The Record was added:\t{} {} {} {} {} {}", employee_ID, project_Id, startTime, endTime, workTime, restTime, comment);
             } else {
-                pre.setString(0, sql);
+                LOGGER.info("There is an error ....");
             }
 
             pre.executeUpdate();
@@ -164,7 +192,7 @@ public class DatabankConnection {
             try {
                 if (conn != null) {
                     conn.close();
-                    //LOGGER.info("The Conection is closed");
+                    LOGGER.info("The Conection is closed");
                 }
             } catch (SQLException e) {
                 LOGGER.error(e.getMessage());
@@ -198,7 +226,7 @@ public class DatabankConnection {
                         a.getEmployeeID() + "\t" + a.getFirstName() + "\t" + a.getLastName() + "\t" + a.getEmailAdress() + "\t" + a.getPostion() + "\t"
                         + a.getProjectID() + "\t" + a.getProjectNumber() + "\t" + a.getProjectName() + "\t" + a.getDescription() + "\t"
                         + a.getTimeRecording_ID() + "\t" + a.getEmployee_ID() + "\t" + a.getProject_ID() + "\t" + a.getStartTime()
-                        + "\t" + a.getEndTime() + "\t" + a.getWorkTime() + "\t" + a.getComment());
+                        + "\t" + a.getEndTime() + "\t" + a.getWorkTime() + "\t" + a.getRestTime() + "\t" + a.getComment());
             });
         }
 

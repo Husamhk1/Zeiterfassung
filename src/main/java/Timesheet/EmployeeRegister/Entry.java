@@ -4,6 +4,14 @@
  */
 package Timesheet.EmployeeRegister;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
+import java.time.format.FormatStyle;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,14 +63,13 @@ public class Entry {
     }
 
     //Constructor of TimeRecords
-    Entry(int timeRecording_ID, int employee_ID, int project_ID, String startTime, String endTime, float workTime, float restTime, String comment) {
-        this.timeRecording_ID = timeRecording_ID;
+    Entry(int employee_ID, int project_ID, String startTime, String endTime, float restTime, String comment) {
+
         this.employee_ID = employee_ID;
         this.project_ID = project_ID;
         this.startTime = startTime;
         this.restTime = restTime;
         this.endTime = endTime;
-        this.workTime = workTime;
         this.comment = comment;
 
     }
@@ -259,7 +266,7 @@ public class Entry {
      * @param startTime the startTime to set
      */
     public void setStartTime(String startTime) {
-        this.startTime = startTime;
+        this.startTime = convertTheInputTimeToLocalTime(startTime).toString();
     }
 
     /**
@@ -273,7 +280,7 @@ public class Entry {
      * @param endTime the endTime to set
      */
     public void setEndTime(String endTime) {
-        this.endTime = endTime;
+        this.endTime = convertTheInputTimeToLocalTime(endTime).toString();
     }
 
     /**
@@ -326,10 +333,43 @@ public class Entry {
     }
 
     /**
-     * @param workTime the workTime to set
+     * @param startTime
+     * @param endTime
+     * @param restTime
      */
-    public void setWorkTime(float workTime) {
-        this.workTime = workTime;
+    public void setWorkTime(String startTime, String endTime, float restTime) {
+
+        this.workTime = convertFSTDec(endTime) - convertFSTDec(startTime) - restTime;
+    }
+
+    public float convertFSTDec(String time) {
+        /*String[] strAr = time.split(":");
+        int hours = Integer.parseInt(strAr[0]);
+        int min = Integer.parseInt(strAr[1]);*/
+        LocalTime loaclTime = convertTheInputTimeToLocalTime(time);
+        int h = loaclTime.getHour();
+        int m = loaclTime.getMinute();
+        float res = h + m / 60.0f;
+
+        return res;
+
+    }
+
+    public LocalTime convertTheInputTimeToLocalTime(String time) {
+
+        DateTimeFormatter defaultAM = new DateTimeFormatterBuilder()
+                .parseCaseInsensitive()
+                .appendPattern("H:m[:ss]")
+                .optionalStart().appendLiteral(' ').appendPattern("a").optionalEnd()
+                .optionalStart().appendLiteral(' ').appendPattern("a").optionalEnd()
+                .parseDefaulting(ChronoField.HOUR_OF_DAY, 0) // 0=AM, 1=PM
+                .toFormatter();
+
+        LocalTime localTime = LocalTime.parse(time, defaultAM);         // -> 09:30
+        //LocalTime t2 = LocalTime.parse("9:30 PM", defaultAM);     // -> 21:30
+        //String iso = DateTimeFormatter.ISO_LOCAL_TIME.format(t);  // "09:30:00"
+
+        return localTime;
     }
 
 }
