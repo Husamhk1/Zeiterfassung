@@ -4,16 +4,12 @@
  */
 package Timesheet.EmployeeRegister;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
-import java.time.format.DateTimeParseException;
-import java.time.format.FormatStyle;
 import java.time.temporal.ChronoField;
-import java.util.ArrayList;
-import java.util.List;
+
 
 /**
  *
@@ -35,7 +31,7 @@ public class Entry {
     private String description;
 
     //TimeRecording Data
-    private int timeRecording_ID;
+    private int timeRecordingId;
     private int employee_ID;
     private int project_ID;
     private String startTime;
@@ -45,8 +41,8 @@ public class Entry {
     private String comment;
 
     //Constructor of Employees
-    Entry(String firstName, String lastName, String emailAdress, String postion) {
-
+    Entry(int employeeID, String firstName, String lastName, String emailAdress, String postion) {
+        this.employeeID = employeeID;
         this.firstName = firstName;
         this.lastName = lastName;
         this.emailAdress = emailAdress;
@@ -54,8 +50,8 @@ public class Entry {
     }
 
     //Constructor of Projects
-    Entry(String projectName, String projectNumber, String description) {
-
+    Entry(int projectID, String projectName, String projectNumber, String description) {
+        this.projectID = projectID;
         this.projectName = projectName;
         this.projectNumber = projectNumber;
         this.description = description;
@@ -63,8 +59,8 @@ public class Entry {
     }
 
     //Constructor of TimeRecords
-    Entry(int employee_ID, int project_ID, String startTime, String endTime, float restTime, String comment) {
-
+    Entry(int timeRecordingId, int employee_ID, int project_ID, String startTime, String endTime, float restTime, String comment) {
+        this.timeRecordingId = timeRecordingId;
         this.employee_ID = employee_ID;
         this.project_ID = project_ID;
         this.startTime = startTime;
@@ -76,7 +72,7 @@ public class Entry {
 
     Entry(int employeeID, String firstName, String lastName, String emailAdress, String postion,
             int projectID, String projectName, String projectNumber, String description,
-            int timeRecording_ID, int employee_ID, int project_ID, String startTime, String endTime, float workTime, float restTime, String comment) {
+            int timeRecordingId, int employee_ID, int project_ID, String startTime, String endTime, float workTime, float restTime, String comment) {
         this.employeeID = employeeID;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -86,7 +82,7 @@ public class Entry {
         this.projectName = projectName;
         this.projectNumber = projectNumber;
         this.description = description;
-        this.timeRecording_ID = timeRecording_ID;
+        this.timeRecordingId = timeRecordingId;
         this.employee_ID = employee_ID;
         this.project_ID = project_ID;
         this.startTime = startTime;
@@ -214,17 +210,17 @@ public class Entry {
     }
 
     /**
-     * @return the timeRecording_ID
+     * @return the timeRecordingId
      */
-    public int getTimeRecording_ID() {
-        return timeRecording_ID;
+    public int getTimeRecordingId() {
+        return timeRecordingId;
     }
 
     /**
-     * @param timeRecording_ID the timeRecording_ID to set
+     * @param timeRecordingId the timeRecordingId to set
      */
-    public void setTimeRecording_ID(int timeRecording_ID) {
-        this.timeRecording_ID = timeRecording_ID;
+    public void setTimeRecordingId(int timeRecordingId) {
+        this.timeRecordingId = timeRecordingId;
     }
 
     /**
@@ -329,17 +325,14 @@ public class Entry {
      * @return the workTime
      */
     public float getWorkTime() {
+         
         return workTime;
     }
 
-    /**
-     * @param startTime
-     * @param endTime
-     * @param restTime
-     */
-    public void setWorkTime(String startTime, String endTime, float restTime) {
+  
+    public void setWorkTime() {
 
-        this.workTime = convertFSTDec(endTime) - convertFSTDec(startTime) - restTime;
+        this.workTime = convertFSTDec(getEndTime()) - convertFSTDec(getStartTime()) - getRestTime();
     }
 
     public float convertFSTDec(String time) {

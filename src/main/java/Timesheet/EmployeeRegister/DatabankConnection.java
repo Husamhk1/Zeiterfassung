@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 public class DatabankConnection {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabankConnection.class);
+
     // specify location of Databank
     File databank = new File("C:\\Users\\husam.qasem\\Documents\\NetBeansProjects\\Zeiterfassung\\databank\\DB_zeiterfassung.db");
     // Then open the friendsdb file with sqllite jdbc driver
@@ -35,14 +36,15 @@ public class DatabankConnection {
 
     // Read all records of Employees from my Database Sample :)
     public List<Entry> findAllTable(String tableName) throws IOException, SQLException {
-        List<Entry> rows = new ArrayList<>();
+        List<Entry> entr = new ArrayList<>();
         String sql = "";
 
-        if ((tableName.equalsIgnoreCase("employees")) || (tableName.equalsIgnoreCase("projects")) || (tableName.equalsIgnoreCase("timeRecording"))) {
-            LOGGER.info("The Tablename is entered \t :{} ", tableName);
+        if (!tableName.isBlank()) {
+            LOGGER.info("I'm looking for a data in this table...!!! \t :{} ", tableName);
             sql = "SELECT * FROM " + tableName;
-        } else {
-            LOGGER.info("The tablename is't correct. Try again! :)");
+            
+        } else if(tableName.isBlank()){
+            LOGGER.info("The Table Name is blank, The date will be present the all Tables'Data....");
             sql = "SELECT * FROM employees "
                     + "INNER JOIN projects on ProjectID = project_ID "
                     + "INNER JOIN timeRecording on employeeID = employee_ID";
@@ -50,23 +52,22 @@ public class DatabankConnection {
         try (
                 Connection conn = DriverManager.getConnection(url); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
 
-            LOGGER.info("The filds of the Table  are \t :{}", tableName);
             // loop through the result set
             while (rs.next()) {
                 if (tableName.equalsIgnoreCase("employees")) {
 
-                    rows.add(new Entry(rs.getString("firstName"), rs.getString("lastName"), rs.getString("emailAdress"), rs.getString("postion")));
+                    entr.add(new Entry(rs.getInt("employeeID"), rs.getString("firstName"), rs.getString("lastName"), rs.getString("emailAdress"), rs.getString("postion")));
                 } else if (tableName.equalsIgnoreCase("projects")) {
 
-                    rows.add(new Entry(rs.getString("projectNumber"), rs.getString("projectName"), rs.getString("description")));
+                    entr.add(new Entry(rs.getInt("ProjectID"), rs.getString("projectNumber"), rs.getString("projectName"), rs.getString("description")));
                 } else if (tableName.equalsIgnoreCase("timeRecording")) {
 
-                    rows.add(new Entry(rs.getInt("employee_ID"), rs.getInt("project_ID"), rs.getString("startTime"), rs.getString("endTime"), rs.getFloat("restTime"), rs.getString("comment")));
-                } else {
-                    LOGGER.info("The all filds of the databank will be printed her!");
-                    rows.add(new Entry(rs.getInt("employeeID"), rs.getString("firstName"), rs.getString("lastName"), rs.getString("emailAdress"), rs.getString("postion"),
+                    entr.add(new Entry(rs.getInt("timeRecordingID"), rs.getInt("employee_ID"), rs.getInt("project_ID"), rs.getString("startTime"), rs.getString("endTime"), rs.getFloat("restTime"), rs.getString("comment")));
+                } else if(tableName.isBlank()){
+                    //LOGGER.info("The all filds of the databank will be printed her!");
+                    entr.add(new Entry(rs.getInt("employeeID"), rs.getString("firstName"), rs.getString("lastName"), rs.getString("emailAdress"), rs.getString("postion"),
                             rs.getInt("ProjectID"), rs.getString("projectNumber"), rs.getString("projectName"), rs.getString("description"),
-                            rs.getInt("timeRecording_ID"), rs.getInt("employee_ID"), rs.getInt("project_ID"), rs.getString("startTime"), rs.getString("endTime"), rs.getFloat("workTime"), rs.getFloat("restTime"), rs.getString("comment")
+                            rs.getInt("timeRecordingID"), rs.getInt("employee_ID"), rs.getInt("project_ID"), rs.getString("startTime"), rs.getString("endTime"), rs.getFloat("workTime"), rs.getFloat("restTime"), rs.getString("comment")
                     ));
                 }
             }
@@ -74,40 +75,55 @@ public class DatabankConnection {
 
             System.out.println(e.getMessage());
         }
-        return rows;
+        return entr;
     }
 
     public List<Entry> findeById(int id, String tableName) throws IOException, SQLException {
-        List<Entry> rows = new ArrayList<>();
 
         try {
             if (tableName.equalsIgnoreCase("employees")) {
-
-                //rows =  findAllTable(tableName).stream().filter((Entry ent) -> ((ent.getEmployeeID() == id)).collect(Collectors.toList());
-                 
-            }else if(tableName.equalsIgnoreCase("projects")){
-                rows = findAllTable(tableName).stream().filter((Entry ent)->(ent.getProjectID()== id)).collect(Collectors.toList());
-                
-            }else {
-                rows = findAllTable(tableName).stream().filter((Entry ent)->(ent.getTimeRecording_ID() == id)).collect(Collectors.toList());
+                return findAllTable(tableName).stream().filter((Entry e)
+                        -> ((e.getEmployeeID() == id))).collect(Collectors.toList());
+            } else if (tableName.equalsIgnoreCase("projects")) {
+                return findAllTable(tableName).stream().filter((Entry e)
+                        -> ((e.getProjectID() == id))).collect(Collectors.toList());
+            } else if (tableName.equalsIgnoreCase("timeRecording")) {
+                return findAllTable(tableName).stream().filter((Entry e)
+                        -> ((e.getTimeRecordingId() == id))).collect(Collectors.toList());
+            } else if(tableName.isBlank()){
+                LOGGER.info("The record of the employee with this ID is:");
+                return findAllTable(tableName).stream().filter((Entry e)
+                        -> ((e.getEmployeeID() == id))).collect(Collectors.toList());
+            }else{
+                LOGGER.info("Erorr to finde the recorde with ID... :(");
             }
-        } catch (Exception e) {
-            LOGGER.info(e.getMessage());
 
+        } catch (IOException | SQLException e) {
+            LOGGER.info(e.getMessage());
         }
 
-        return rows;
+        return null;
     }
 
-    public void addOneRecord(String tableName, List<Entry> entry) {
+    public List<Entry> addWorkTimeToEmloyee(int employeeID, int projectId) throws IOException, SQLException {
+        String sql = sql = "Insert INTO timeRecording(employeeID,projectId,startTime, endTime, comment, workTime,restTime) VALUES(?,?,?,?,?,?,?)";;
+        if (!(findeById(employeeID, "employees").isEmpty()) && !(findeById(projectId, "projects").isEmpty()));
+
+        return null;
+    }
+
+    public void addOneRecord(String tableName, List<Entry> entry) throws SQLException, IOException {
+
         String sql = "";
         //Employees
+        int employeeId = entry.get(0).getEmployeeID();
         String firstName = entry.get(0).getFirstName();
         String lastName = entry.get(0).getLastName();
         String emailAdress = entry.get(0).getEmailAdress();
         String postion = entry.get(0).getPostion();
 
         //Projects
+        int projectId = entry.get(0).getProjectID();
         String projectNumber = entry.get(0).getProjectNumber();
         String projectName = entry.get(0).getProjectName();
         String description = entry.get(0).getDescription();
@@ -121,22 +137,35 @@ public class DatabankConnection {
         float restTime = entry.get(0).getRestTime();
         String comment = entry.get(0).getComment();
 
-        LOGGER.info("Insert a new Record in the Table of {} \t :", tableName);
         if (tableName.equalsIgnoreCase("employees")) {
-
+            LOGGER.info("Insert a new Record in the Table of {} \t :", tableName);
             sql = "INSERT INTO employees(firstName,lastName,emailAdress,postion) VALUES(?,?,?,?)";
 
         } else if (tableName.equalsIgnoreCase("projects")) {
-
+            LOGGER.info("Insert a new Record in the Table of {} \t :", tableName);
             sql = "INSERT INTO projects(projectNumber,projectName,description) VALUES(?,?,?)";
-        } else {
 
-            sql = "Insert INTO timeRecording("
-                    + "(SELECT employee_ID FROM employees WHERE  firstName = " + firstName + "AND lastName =" + lastName + "),"
-                    + "(SELECT project_ID FROM prjects WHERE projectName = " + projectName + "AND projectNumber =" + projectNumber + "),"
-                    + "startTime, endTime, comment, workTime,restTime) VALUES(?,?,?,?,?,?,?)";
+        } else if (tableName.equalsIgnoreCase("timeRecording")) {
+            LOGGER.info("Insert a new Record in the Table of {} \t :", tableName);
+            sql = "Insert INTO timeRecording(employee_ID,project_Id,startTime, endTime, comment, workTime,restTime) VALUES(?,?,?,?,?,?,?)";
+        } else if (tableName.isBlank()) {
+            LOGGER.info("Prepareinge to insert a record in the databank.....!");
+            //LOGGER.info("Test   {}"+ findeById(employee_ID, "employees").stream().findAny().isPresent());
+            if (findeById(employee_ID, "employees").stream().findAny().isPresent() 
+                    && findeById(project_Id, "projects").stream().findAny().isPresent()) {
+    
+                sql = "Insert INTO timeRecording(employee_ID,project_Id,startTime, endTime, comment, workTime,restTime) VALUES(?,?,?,?,?,?,?)";
+                LOGGER.info("The Timework was entered for the Employee: {}\t", firstName);
+
+            } else if (findeById(employee_ID, "employees").stream().findAny().isEmpty()
+                    || findeById(project_Id, "projects").stream().findAny().isEmpty())  {
+                LOGGER.info("This employee or the project is not exist. "
+                        + "\nPlease try to enter a new Employee acount or new project");
+            }else {
+                LOGGER.info("Error...");
+            }
+
         }
-
         try {
             Connection conn = DriverManager.getConnection(url);
             PreparedStatement pre = conn.prepareStatement(sql);
@@ -163,7 +192,14 @@ public class DatabankConnection {
 
                 LOGGER.info("The Record was added:\t{} {} {} {} {} {}", employee_ID, project_Id, startTime, endTime, workTime, restTime, comment);
             } else {
-                LOGGER.info("There is an error ....");
+                pre.setInt(1, employee_ID);
+                pre.setInt(2, project_Id);
+                pre.setString(3, startTime);
+                pre.setString(4, endTime);
+                pre.setFloat(5, workTime);
+                pre.setFloat(6, restTime);
+                pre.setString(7, comment);
+                LOGGER.info("The Record was for the Employee " + employeeId + " added:\t{} {} {} {} {} {}", employee_ID, project_Id, startTime, endTime, workTime, restTime, comment);
             }
 
             pre.executeUpdate();
@@ -182,7 +218,7 @@ public class DatabankConnection {
         try {
             // create a connection to the database
             conn = DriverManager.getConnection(url);
-            //System.out.println("??? Connection to SQLite has been established to the Database:" + url );
+
             LOGGER.info("Connection to SQLite is established:{}", url);
 
         } catch (SQLException e) {
@@ -203,29 +239,29 @@ public class DatabankConnection {
 
     ;
     
-    public void printTable(String tableName) throws SQLException, IOException {
+    public void printTable(String tableName, List<Entry> entry) throws SQLException, IOException {
 
         if (tableName.equalsIgnoreCase("employees")) {
-            findAllTable(tableName).forEach(a -> {
+            entry.forEach(a -> {
                 System.out.println(a.getEmployeeID() + "\t" + a.getFirstName() + "\t" + a.getLastName() + "\t" + a.getEmailAdress() + "\t" + a.getPostion());
             });
         } else if (tableName.equalsIgnoreCase("projects")) {
-            findAllTable(tableName).forEach(a -> {
+            entry.forEach(a -> {
                 System.out.println(a.getProjectID() + "\t" + a.getProjectNumber() + "\t" + a.getProjectName() + "\t" + a.getDescription());
             });
         } else if ((tableName.equalsIgnoreCase("timeRecording"))) {
-            findAllTable(tableName).forEach(a -> {
-                System.out.println(a.getTimeRecording_ID() + "\t" + a.getEmployee_ID() + "\t" + a.getProject_ID() + "\t" + a.getStartTime()
+            entry.forEach(a -> {
+                System.out.println(a.getTimeRecordingId() + "\t" + a.getEmployee_ID() + "\t" + a.getProject_ID() + "\t" + a.getStartTime()
                         + "\t" + a.getEndTime() + "\t" + a.getWorkTime() + "\t" + a.getComment());
             });
         } else {
-            LOGGER.info("The all filds of the databank will be printed her!");
+            //LOGGER.info("The all filds of the databank will be printed her!");
 
-            findAllTable(tableName).forEach(a -> {
+            entry.forEach(a -> {
                 System.out.println(
                         a.getEmployeeID() + "\t" + a.getFirstName() + "\t" + a.getLastName() + "\t" + a.getEmailAdress() + "\t" + a.getPostion() + "\t"
                         + a.getProjectID() + "\t" + a.getProjectNumber() + "\t" + a.getProjectName() + "\t" + a.getDescription() + "\t"
-                        + a.getTimeRecording_ID() + "\t" + a.getEmployee_ID() + "\t" + a.getProject_ID() + "\t" + a.getStartTime()
+                        + a.getTimeRecordingId() + "\t" + a.getEmployee_ID() + "\t" + a.getProject_ID() + "\t" + a.getStartTime()
                         + "\t" + a.getEndTime() + "\t" + a.getWorkTime() + "\t" + a.getRestTime() + "\t" + a.getComment());
             });
         }
